@@ -1,5 +1,5 @@
-# Wazuh App Copyright (C) 2017, Wazuh Inc. (License GPLv2)
-version: '3.7'
+# Defendy
+version: '0.1'
 
 services:
   wazuh.master:
@@ -14,9 +14,9 @@ services:
         soft: 655360
         hard: 655360
     ports:
-      - "1515:1515"
-      - "514:514/udp"
-      - "55000:55000"
+      - "1515:30001"
+      - "514:30002/udp"
+      - "127.0.0.1:55000:55000"
     environment:
       - INDEXER_URL=https://wazuh1.indexer:9200
       - INDEXER_USERNAME=admin
@@ -85,7 +85,7 @@ services:
     hostname: wazuh1.indexer
     restart: always
     ports:
-      - "9200:9200"
+      - "9200:30003"
     environment:
       - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
       - "bootstrap.memory_lock=true"
@@ -111,7 +111,7 @@ services:
     hostname: wazuh.dashboard
     restart: always
     ports:
-      - 443:5601
+      - 127.0.0.1:443:443
     environment:
       - OPENSEARCH_HOSTS="https://wazuh1.indexer:9200"
       - WAZUH_API_URL="https://wazuh.master"
@@ -138,7 +138,7 @@ services:
     hostname: nginx
     restart: always
     ports:
-      - "1514:1514"
+      - "1514:30000"
     depends_on:
       - wazuh.master
       - wazuh.worker
@@ -149,6 +149,47 @@ services:
       - wazuh.dashboard:wazuh.dashboard
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+  mongodb:
+    image: "mongo:5.0"
+    volumes:
+      - "mongodb_data:/data/db"
+    restart: "on-failure"
+
+  graylog:
+    hostname: "server"
+    image: "${GRAYLOG_IMAGE:-graylog/graylog-enterprise:5.0}"
+    depends_on:
+      wazuh1.indexer:
+        condition: "service_started"
+      mongodb:
+        condition: "service_started"
+    entrypoint: "/usr/bin/tini -- wait-for-it wazuh1.indexer:9200 --  /docker-entrypoint.sh"
+    environment:
+      GRAYLOG_NODE_ID_FILE: "/usr/share/graylog/data/config/node-id"
+      GRAYLOG_PASSWORD_SECRET: "${GRAYLOG_PASSWORD_SECRET:?Please configure GRAYLOG_PASSWORD_SECRET in the .env file}"
+      GRAYLOG_ROOT_PASSWORD_SHA2: "${GRAYLOG_ROOT_PASSWORD_SHA2:?Please configure GRAYLOG_ROOT_PASSWORD_SHA2 in the .env file}"
+      GRAYLOG_HTTP_BIND_ADDRESS: "0.0.0.0:9000"
+      GRAYLOG_HTTP_EXTERNAL_URI: "http://localhost:9000/"
+      GRAYLOG_ELASTICSEARCH_HOSTS: "http://wazuh1.indexer:9200"
+      GRAYLOG_MONGODB_URI: "mongodb://mongodb:27017/graylog"
+      # To make reporting (headless_shell) work inside a Docker container
+      GRAYLOG_REPORT_DISABLE_SANDBOX: "true"
+    ports:
+    - 127.0.0.1:5044:5044/tcp   # Beats
+    - 127.0.0.1:5140:5140/tcp   # Syslog TCP
+    - 127.0.0.1:5140:5140/udp   # Syslog UDP
+    - 127.0.0.1:5555:5555/tcp   # RAW TCP
+    - 127.0.0.1:5555:5555/udp   # RAW TCP
+    - 127.0.0.1:9000:9000/tcp   # Server API
+    - 127.0.0.1:12201:12201/tcp # GELF TCP
+    - 127.0.0.1:12201:12201/udp # GELF UDP
+    - 127.0.0.1:13301:13301/tcp # Forwarder data
+    - 127.0.0.1:13302:13302/tcp # Forwarder config
+    volumes:
+      - "graylog_data:/usr/share/graylog/data/data"
+      - "graylog_journal:/usr/share/graylog/data/journal"
+    restart: "on-failure"
 
 volumes:
   master-wazuh-api-configuration:
@@ -176,3 +217,7 @@ volumes:
   wazuh-indexer-data-1:
   wazuh-dashboard-config:
   wazuh-dashboard-custom:
+  mongodb_data:
+  os_data:
+  graylog_data:
+  graylog_journal:
