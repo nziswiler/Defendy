@@ -54,3 +54,10 @@ snapshotrestore:
   backend_roles:
   - "snapshotrestore"
   description: "Demo snapshotrestore user"
+
+graylog:
+  hash: "$2y$12$K/SpwjtB.wOHJ/Nc6GVRDuc1h0rM1DfvziFRNPtk27P.c4yDr9njO"
+  reserved: false
+  backend_roles:
+  - "admin"
+  description: "graylog user"
