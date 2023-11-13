@@ -37,7 +37,7 @@ services:
       - master-wazuh-active-response:/var/ossec/active-response/bin
       - master-wazuh-agentless:/var/ossec/agentless
       - master-wazuh-wodles:/var/ossec/wodles
-      - master-filebeat-etc:/etc/filebeat
+      - ./config/filebeat-etc/filebeat.yml:/etc/filebeat/filebeat.yml:ro
       - master-filebeat-var:/var/lib/filebeat
       - ./config/wazuh_indexer_ssl_certs/root-ca-manager.pem:/etc/ssl/root-ca.pem
       - ./config/wazuh_indexer_ssl_certs/wazuh.master.pem:/etc/ssl/filebeat.pem
@@ -73,7 +73,7 @@ services:
       - worker-wazuh-active-response:/var/ossec/active-response/bin
       - worker-wazuh-agentless:/var/ossec/agentless
       - worker-wazuh-wodles:/var/ossec/wodles
-      - worker-filebeat-etc:/etc/filebeat
+      - ./config/filebeat-etc/filebeat.yml:/etc/filebeat/filebeat.yml:ro
       - worker-filebeat-var:/var/lib/filebeat
       - ./config/wazuh_indexer_ssl_certs/root-ca-manager.pem:/etc/ssl/root-ca.pem
       - ./config/wazuh_indexer_ssl_certs/wazuh.worker.pem:/etc/ssl/filebeat.pem
