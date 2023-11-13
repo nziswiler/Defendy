@@ -1,3 +1,3 @@
 # Defendy
 
-Based on https://github.com/wazuh/wazuh-docker
+Based on Wazuh: https://github.com/wazuh/wazuh-docker/
