@@ -1,0 +1,15 @@
+PUT /_snapshot/Daily-Snapshots
+{
+  "type": "fs",
+  "settings": {
+    "location": "/mnt/snapshots/daily"
+  }
+}
+
+/* CURL-URL */
+curl -XPUT  "http://172.162.243.188:9200/_snapshot/Daily-Snapshots" -H "Content-type: application/json" -d '{
+    "type": "fs",
+    "settings": {
+      "location": "/mnt/snapshots/daily"
+    }
+  }'

@@ -1,0 +1,15 @@
+PUT /_snapshot/Archive
+{
+  "type": "fs",
+  "settings": {
+    "location": "/mnt/snapshots/archive"
+  }
+}
+
+/* CURL-URL */
+curl -XPUT  "http://172.162.243.188:9200/_snapshot/Archive" -H "Content-type: application/json" -d '{
+    "type": "fs",
+    "settings": {
+      "location": "/mnt/snapshots/archive"
+    }
+  }'

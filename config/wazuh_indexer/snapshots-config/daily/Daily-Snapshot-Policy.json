@@ -1,0 +1,46 @@
+POST _plugins/_sm/policies/daily-snapshot
+{
+    "_id": "daily-policy-sm-policy",
+    "_version": 2,
+    "_seq_no": 586,
+    "_primary_term": 21,
+    "sm_policy": {
+      "name": "daily-policy",
+      "description": "Daily-Snapshot of wazuh-alerts-* and wazuh-archives-* DELETE SNAPSHOT AFTER 90 Days",
+      "schema_version": 18,
+      "creation": {
+        "schedule": {
+          "cron": {
+            "expression": "59 23 * * *",
+            "timezone": "UTC"
+          }
+        }
+      },
+      "deletion": {
+        "schedule": {
+          "cron": {
+            "expression": "59 23 * * *",
+            "timezone": "UTC"
+          }
+        },
+        "condition": {
+          "max_age": "90d",
+          "min_count": 1
+        }
+      },
+      "snapshot_config": {
+        "indices": "wazuh-alerts-*,wazuh-archives-*",
+        "repository": "Snapshots"
+      },
+      "schedule": {
+        "interval": {
+          "start_time": 1699976034519,
+          "period": 1,
+          "unit": "Minutes"
+        }
+      },
+      "enabled": true,
+      "last_updated_time": 1699978130600,
+      "enabled_time": 1699976034519
+    }
+  }
