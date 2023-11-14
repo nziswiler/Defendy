@@ -1,8 +1,9 @@
+PUT _plugins/_ism/policies/Alert-Archive-Lifecycle
 {
     "policy": {
         "policy_id": "Alert-Archive-Lifecycle",
         "description": "Hot: Initial State - Priority 100\nWarm: After 1 Day - Read only - Priority 50\nCold: After 10 Days - Force Merge - Priority 3\nFrozen: After 30 Days - Close - Priority 2\nDelete: After 90 Days - Snapshot to Archive - Delete",
-        "last_updated_time": 1699973559139,
+        "last_updated_time": 1699978595009,
         "schema_version": 18,
         "error_notification": null,
         "default_state": "Hot",
@@ -135,8 +136,8 @@
                             "delay": "1m"
                         },
                         "snapshot": {
-                            "repository": "archive_repository",
-                            "snapshot": "archive_backup"
+                            "repository": "Archive",
+                            "snapshot": "archive-snapshot"
                         }
                     },
                     {

@@ -1,3 +1,4 @@
+PUT _plugins/_ism/policies/Statistics-Monitoring-Lifecycle
 {
     "policy": {
         "policy_id": "Statistics-Monitoring-Lifecycle",
