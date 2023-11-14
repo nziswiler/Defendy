@@ -14,9 +14,9 @@ services:
         soft: 655360
         hard: 655360
     ports:
-      - "1515:1515"
-      - "514:514/udp"
-      - "55000:55000"
+      - "${WAZUH_AGENT_ENROLLMENT_PORT:-1515}:1515"
+      - "${WAZUH_SYSLOG_PORT:-514}:514/udp"
+      - "${WAZUH_API_PORT:-55000}:55000"
     environment:
       - INDEXER_URL=https://wazuh1.indexer:9200
       - INDEXER_USERNAME=admin
@@ -85,7 +85,7 @@ services:
     hostname: wazuh1.indexer
     restart: always
     ports:
-      - "9200:9200"
+      - "${WAZUH_INDEXER_PORT:-9200}:9200"
     environment:
       - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
       - "bootstrap.memory_lock=true"
@@ -112,7 +112,7 @@ services:
     hostname: wazuh.dashboard
     restart: always
     ports:
-      - 443:5601
+      - "${WAZUH_DASHBOARD_PORT:-443}:5601"
     environment:
       - OPENSEARCH_HOSTS="https://wazuh1.indexer:9200"
       - WAZUH_API_URL="https://wazuh.master"
@@ -139,7 +139,7 @@ services:
     hostname: nginx
     restart: always
     ports:
-      - "1514:1514"
+      - "${WAZUH_AGENT_CONNECTION_PORT:-1514}:1514"
     depends_on:
       - wazuh.master
       - wazuh.worker
