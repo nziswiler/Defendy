@@ -1,14 +1,14 @@
 {
     "policy": {
-        "policy_id": "index_lifecycle_policy",
-        "description": "Wazuh index state management: after 1 day move into a warm state, after 10 days move into cold state, after 30 days move into frozen state and after 90 day move to deleted",
-        "last_updated_time": 1699890663884,
+        "policy_id": "Alert-Archive-Lifecycle",
+        "description": "Hot: Initial State - Priority 100\nWarm: After 1 Day - Read only - Priority 50\nCold: After 10 Days - Force Merge - Priority 3\nFrozen: After 30 Days - Close - Priority 2\nDelete: After 90 Days - Snapshot to Archive - Delete",
+        "last_updated_time": 1699973559139,
         "schema_version": 18,
         "error_notification": null,
-        "default_state": "hot",
+        "default_state": "Hot",
         "states": [
             {
-                "name": "hot",
+                "name": "Hot",
                 "actions": [
                     {
                         "retry": {
@@ -23,7 +23,7 @@
                 ],
                 "transitions": [
                     {
-                        "state_name": "warm",
+                        "state_name": "Warm",
                         "conditions": {
                             "min_index_age": "1d"
                         }
@@ -31,7 +31,7 @@
                 ]
             },
             {
-                "name": "warm",
+                "name": "Warm",
                 "actions": [
                     {
                         "retry": {
@@ -54,7 +54,7 @@
                 ],
                 "transitions": [
                     {
-                        "state_name": "cold",
+                        "state_name": "Cold",
                         "conditions": {
                             "min_index_age": "10d"
                         }
@@ -62,7 +62,7 @@
                 ]
             },
             {
-                "name": "cold",
+                "name": "Cold",
                 "actions": [
                     {
                         "retry": {
@@ -87,7 +87,7 @@
                 ],
                 "transitions": [
                     {
-                        "state_name": "frozen",
+                        "state_name": "Frozen",
                         "conditions": {
                             "min_index_age": "30d"
                         }
@@ -95,8 +95,18 @@
                 ]
             },
             {
-                "name": "frozen",
+                "name": "Frozen",
                 "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "index_priority": {
+                            "priority": 2
+                        }
+                    },
                     {
                         "retry": {
                             "count": 3,
@@ -108,7 +118,7 @@
                 ],
                 "transitions": [
                     {
-                        "state_name": "delete",
+                        "state_name": "Delete",
                         "conditions": {
                             "min_index_age": "90d"
                         }
@@ -116,7 +126,7 @@
                 ]
             },
             {
-                "name": "delete",
+                "name": "Delete",
                 "actions": [
                     {
                         "retry": {
@@ -144,14 +154,14 @@
         "ism_template": [
             {
                 "index_patterns": [
-                    "wazuh-alerts*"
+                    "wazuh‑alerts-*"
                 ],
                 "priority": 100,
                 "last_updated_time": 1699889226263
             },
             {
                 "index_patterns": [
-                    "wazuh-archives*"
+                    "wazuh‑archives-*"
                 ],
                 "priority": 99,
                 "last_updated_time": 1699890663883

@@ -1,0 +1,75 @@
+{
+    "policy": {
+        "policy_id": "Statistics-Monitoring-Lifecycle",
+        "description": "Readonly after 1 Day\nClosed after 30 Days\nDelete after 90 Days\nNO BACKUP\n",
+        "last_updated_time": 1699973048687,
+        "schema_version": 18,
+        "error_notification": null,
+        "default_state": "Hot",
+        "states": [
+            {
+                "name": "Hot",
+                "actions": [],
+                "transitions": [
+                    {
+                        "state_name": "Cold",
+                        "conditions": {
+                            "min_index_age": "30d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Cold",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "read_only": {}
+                    }
+                ],
+                "transitions": [
+                    {
+                        "state_name": "Delete",
+                        "conditions": {
+                            "min_index_age": "90d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Delete",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "delete": {}
+                    }
+                ],
+                "transitions": []
+            }
+        ],
+        "ism_template": [
+            {
+                "index_patterns": [
+                    "wazuh‑statistics-*"
+                ],
+                "priority": 1,
+                "last_updated_time": 1699973048687
+            },
+            {
+                "index_patterns": [
+                    "wazuh‑monitoring-*"
+                ],
+                "priority": 2,
+                "last_updated_time": 1699973048687
+            }
+        ]
+    }
+}
