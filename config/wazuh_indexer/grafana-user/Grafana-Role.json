@@ -1,0 +1,26 @@
+# Create grafana role
+PUT _plugins/_security/api/roles/grafana_role
+{
+  "cluster_permissions": [
+    "indices_all",
+    "read",
+    "kibana_all_read"
+  ],
+  "index_permissions": [{
+    "index_patterns": [
+      "*"
+    ],
+    "dls": "",
+    "fls": [],
+    "masked_fields": [],
+    "allowed_actions": [
+        "index",
+        "read",
+        "indices_all"
+    ]
+  }],
+  "tenant_permissions": [{
+    "tenant_patterns": [],
+    "allowed_actions": []
+  }]
+}
