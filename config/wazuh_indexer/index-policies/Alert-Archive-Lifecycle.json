@@ -1,3 +1,4 @@
+# Alert and archive lifecycle
 PUT _plugins/_ism/policies/Alert-Archive-Lifecycle
 {
     "policy": {

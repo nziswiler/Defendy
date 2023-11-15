@@ -1,3 +1,4 @@
+# Daily snapshot config
 POST _plugins/_sm/policies/daily-snapshot
 {
     "_id": "daily-policy-sm-policy",
