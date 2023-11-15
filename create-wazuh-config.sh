@@ -1,7 +1,7 @@
 #!/bin/bash
-INDEX_POLICIES="./config/wazuh_indexer/index-policies"
+USER_CONFIG="./config/wazuh_indexer/user-config"
 SNAPSHOTS_CONFIG="./config/wazuh_indexer/snapshots-config"
-USER_CONFIG="./config/wazuh_indexer/grafana-user"
+INDEX_POLICIES="./config/wazuh_indexer/index-policies"
 
 OUTPUT_FILE="./wazuh-config.json"
 
@@ -17,8 +17,8 @@ combine_json_files() {
 }
 
 # Combine JSON files from the directory and its subdirectories
-combine_json_files "$INDEX_POLICIES"
-combine_json_files "$SNAPSHOTS_CONFIG"
 combine_json_files "$USER_CONFIG"
+combine_json_files "$SNAPSHOTS_CONFIG"
+combine_json_files "$INDEX_POLICIES"
 
 echo "Combined JSON files into $OUTPUT_FILE"

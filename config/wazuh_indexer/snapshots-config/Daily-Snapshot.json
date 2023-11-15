@@ -1,3 +1,12 @@
+# Daily snapshots repository
+PUT /_snapshot/Daily-Snapshots
+{
+  "type": "fs",
+  "settings": {
+    "location": "/mnt/snapshots/daily"
+  }
+}
+
 # Daily snapshot config
 POST _plugins/_sm/policies/daily-snapshot
 {

@@ -1,8 +1,0 @@
-# Daily snapshots repository
-PUT /_snapshot/Daily-Snapshots
-{
-  "type": "fs",
-  "settings": {
-    "location": "/mnt/snapshots/daily"
-  }
-}

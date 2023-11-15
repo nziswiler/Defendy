@@ -1,8 +1,0 @@
-# Create grafana user
-PUT _plugins/_security/api/internalusers/grafana
-{
-  "password": "Defendy2023$",
-  "opendistro_security_roles": [],
-  "backend_roles": ["grafana_role"],
-  "attributes": {}
-}

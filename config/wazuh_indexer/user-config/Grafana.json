@@ -24,3 +24,20 @@ PUT _plugins/_security/api/roles/grafana_role
     "allowed_actions": []
   }]
 }
+
+# Create grafana user
+PUT _plugins/_security/api/internalusers/grafana
+{
+  "password": "Defendy2023$",
+  "opendistro_security_roles": [],
+  "backend_roles": ["grafana_role"],
+  "attributes": {}
+}
+
+# Map User to Role
+PUT _plugins/_security/api/rolesmapping/grafana_role
+{
+  "backend_roles" : [],
+  "hosts" : [],
+  "users" : [ "grafana" ]
+}
