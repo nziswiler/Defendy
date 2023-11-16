@@ -75,3 +75,14 @@ PUT _plugins/_ism/policies/Statistics-Monitoring-Lifecycle
         ]
     }
 }
+
+# Add to wazuh-alerts-* and wazuh-archive-* index
+POST _opendistro/_ism/add/wazuh-statistics-*
+{
+  "policy_id": "Statistics-Monitoring-Lifecycle"
+}
+
+POST _opendistro/_ism/add/wazuh-monitoring-*
+{
+  "policy_id": "Statistics-Monitoring-Lifecycle"
+}

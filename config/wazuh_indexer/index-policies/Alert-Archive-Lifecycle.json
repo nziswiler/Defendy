@@ -171,3 +171,14 @@ PUT _plugins/_ism/policies/Alert-Archive-Lifecycle
         ]
     }
 }
+
+# Add to wazuh-alerts-* and wazuh-archive-* index
+POST _opendistro/_ism/add/wazuh-alerts-*
+{
+  "policy_id": "Alert-Archive-Lifecycle"
+}
+
+POST _opendistro/_ism/add/wazuh-archives-*
+{
+  "policy_id": "Alert-Archive-Lifecycle"
+}
