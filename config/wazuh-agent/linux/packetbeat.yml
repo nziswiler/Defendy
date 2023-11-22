@@ -1,0 +1,102 @@
+# BASED ON: https://github.com/socfortress/Wazuh-Rules/blob/main/Packetbeat/packetbeat.yml
+
+#################### Packetbeat Configuration Example #########################
+
+# This file is an example configuration file highlighting only the most common
+# options. The packetbeat.reference.yml file from the same directory contains all the
+# supported options with more comments. You can use it as a reference.
+#
+# You can find the full configuration reference here:
+# https://www.elastic.co/guide/en/beats/packetbeat/index.html
+
+# =============================== Network device ===============================
+
+# Select the network interface to sniff the data. On Linux, you can use the
+# "any" keyword to sniff on all connected interfaces.
+packetbeat.interfaces.device: any
+
+# The network CIDR blocks that are considered "internal" networks for
+# the purpose of network perimeter boundary classification. The valid
+# values for internal_networks are the same as those that can be used
+# with processor network conditions.
+#
+# For a list of available values see:
+# https://www.elastic.co/guide/en/beats/packetbeat/current/defining-processors.html#condition-network
+packetbeat.interfaces.internal_networks:
+  - private
+
+# =================================== Flows ====================================
+
+# Set `enabled: false` or comment out all options to disable flows reporting.
+packetbeat.flows:
+  # Set network flow timeout. Flow is killed if no packet is received before being
+  # timed out.
+  timeout: 30s
+
+  # Configure reporting period. If set to -1, only killed flows will be reported
+  period: 10s
+
+# =========================== Transaction protocols ============================
+
+packetbeat.protocols:
+#- type: icmp
+  # Enable ICMPv4 and ICMPv6 monitoring. The default is true.
+#  enabled: true
+
+#- type: dhcpv4
+  # Configure the DHCP for IPv4 ports.
+#  ports: [67, 68]
+
+- type: dns
+  # Configure the ports where to listen for DNS traffic. You can disable
+  # the DNS protocol by commenting out the list of ports.
+  ports: [53]
+
+- type: http
+  # Configure the ports where to listen for HTTP traffic. You can disable
+  # the HTTP protocol by commenting out the list of ports.
+  ports: [80, 8080, 8000, 5000, 8002]
+
+- type: tls
+  # Configure the ports where to listen for TLS traffic. You can disable
+  # the TLS protocol by commenting out the list of ports.
+  ports:
+    - 443   # HTTPS
+    - 993   # IMAPS
+    - 995   # POP3S
+    - 5223  # XMPP over SSL
+    - 8443
+    - 8883  # Secure MQTT
+    - 9243  # Elasticsearch
+
+
+# ======================= Elasticsearch template setting =======================
+
+setup.template.settings:
+  index.number_of_shards: 1
+  #index.codec: best_compression
+  #_source.enabled: false
+
+# ---------------------------- File Output ---------------------------- 
+output.file:
+ path: "/tmp/packetbeat"
+ filename: packetbeat
+
+# ================================= Processors =================================
+
+processors:
+  - # Add forwarded to tags when processing data from a network tap or mirror.
+    if.contains.tags: forwarded
+    then:
+      - drop_fields:
+          fields: [host]
+    else:
+      - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - detect_mime_type:
+      field: http.request.body.content
+      target: http.request.mime_type
+  - detect_mime_type:
+      field: http.response.body.content
+      target: http.response.mime_type
