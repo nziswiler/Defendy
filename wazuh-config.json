@@ -1,0 +1,381 @@
+# Generated on Thu Nov 23 17:48:46 UTC 2023
+# Create grafana role
+PUT _plugins/_security/api/roles/grafana_role
+{
+  "cluster_permissions": [
+    "indices_all",
+    "read",
+    "kibana_all_read"
+  ],
+  "index_permissions": [{
+    "index_patterns": [
+      "*"
+    ],
+    "dls": "",
+    "fls": [],
+    "masked_fields": [],
+    "allowed_actions": [
+        "index",
+        "read",
+        "indices_all"
+    ]
+  }],
+  "tenant_permissions": [{
+    "tenant_patterns": [],
+    "allowed_actions": []
+  }]
+}
+
+# Create grafana user
+PUT _plugins/_security/api/internalusers/grafana
+{
+  "password": "Defendy2023$",
+  "opendistro_security_roles": [],
+  "backend_roles": ["grafana_role"],
+  "attributes": {}
+}
+
+# Map User to Role
+PUT _plugins/_security/api/rolesmapping/grafana_role
+{
+  "backend_roles" : [],
+  "hosts" : [],
+  "users" : [ "grafana" ]
+}
+# Daily snapshots repository
+PUT /_snapshot/Daily-Snapshots
+{
+  "type": "fs",
+  "settings": {
+    "location": "/mnt/snapshots/daily"
+  }
+}
+
+# Daily snapshot config
+POST _plugins/_sm/policies/daily-snapshot
+{
+    "_id": "daily-policy-sm-policy",
+    "_version": 2,
+    "_seq_no": 586,
+    "_primary_term": 21,
+    "sm_policy": {
+      "name": "daily-policy",
+      "description": "Daily-Snapshot of wazuh-alerts-* and wazuh-archives-* DELETE SNAPSHOT AFTER 90 Days",
+      "schema_version": 18,
+      "creation": {
+        "schedule": {
+          "cron": {
+            "expression": "59 23 * * *",
+            "timezone": "UTC"
+          }
+        }
+      },
+      "deletion": {
+        "schedule": {
+          "cron": {
+            "expression": "59 23 * * *",
+            "timezone": "UTC"
+          }
+        },
+        "condition": {
+          "max_age": "90d",
+          "min_count": 1
+        }
+      },
+      "snapshot_config": {
+        "indices": "wazuh-alerts-*,wazuh-archives-*",
+        "repository": "Snapshots"
+      },
+      "schedule": {
+        "interval": {
+          "start_time": 1699976034519,
+          "period": 1,
+          "unit": "Minutes"
+        }
+      },
+      "enabled": true,
+      "last_updated_time": 1699978130600,
+      "enabled_time": 1699976034519
+    }
+  }
+
+# Archive repository
+PUT /_snapshot/Archive
+{
+  "type": "fs",
+  "settings": {
+    "location": "/mnt/snapshots/archive"
+  }
+}
+# Statistics and monitoring lifecycle
+PUT _plugins/_ism/policies/Statistics-Monitoring-Lifecycle
+{
+    "policy": {
+        "policy_id": "Statistics-Monitoring-Lifecycle",
+        "description": "Readonly after 1 Day\nClosed after 30 Days\nDelete after 90 Days\nNO BACKUP\n",
+        "last_updated_time": 1699973048687,
+        "schema_version": 18,
+        "error_notification": null,
+        "default_state": "Hot",
+        "states": [
+            {
+                "name": "Hot",
+                "actions": [],
+                "transitions": [
+                    {
+                        "state_name": "Cold",
+                        "conditions": {
+                            "min_index_age": "30d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Cold",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "read_only": {}
+                    }
+                ],
+                "transitions": [
+                    {
+                        "state_name": "Delete",
+                        "conditions": {
+                            "min_index_age": "90d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Delete",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "delete": {}
+                    }
+                ],
+                "transitions": []
+            }
+        ],
+        "ism_template": [
+            {
+                "index_patterns": [
+                    "wazuh‑statistics-*"
+                ],
+                "priority": 1,
+                "last_updated_time": 1699973048687
+            },
+            {
+                "index_patterns": [
+                    "wazuh‑monitoring-*"
+                ],
+                "priority": 2,
+                "last_updated_time": 1699973048687
+            }
+        ]
+    }
+}
+
+# Add to wazuh-alerts-* and wazuh-archive-* index
+POST _opendistro/_ism/add/wazuh-statistics-*
+{
+  "policy_id": "Statistics-Monitoring-Lifecycle"
+}
+
+POST _opendistro/_ism/add/wazuh-monitoring-*
+{
+  "policy_id": "Statistics-Monitoring-Lifecycle"
+}
+# Alert and archive lifecycle
+PUT _plugins/_ism/policies/Alert-Archive-Lifecycle
+{
+    "policy": {
+        "policy_id": "Alert-Archive-Lifecycle",
+        "description": "Hot: Initial State - Priority 100\nWarm: After 1 Day - Read only - Priority 50\nCold: After 10 Days - Force Merge - Priority 3\nFrozen: After 30 Days - Close - Priority 2\nDelete: After 90 Days - Snapshot to Archive - Delete",
+        "last_updated_time": 1699978595009,
+        "schema_version": 18,
+        "error_notification": null,
+        "default_state": "Hot",
+        "states": [
+            {
+                "name": "Hot",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "index_priority": {
+                            "priority": 100
+                        }
+                    }
+                ],
+                "transitions": [
+                    {
+                        "state_name": "Warm",
+                        "conditions": {
+                            "min_index_age": "1d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Warm",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "read_only": {}
+                    },
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "index_priority": {
+                            "priority": 50
+                        }
+                    }
+                ],
+                "transitions": [
+                    {
+                        "state_name": "Cold",
+                        "conditions": {
+                            "min_index_age": "10d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Cold",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "index_priority": {
+                            "priority": 3
+                        }
+                    },
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "force_merge": {
+                            "max_num_segments": 1
+                        }
+                    }
+                ],
+                "transitions": [
+                    {
+                        "state_name": "Frozen",
+                        "conditions": {
+                            "min_index_age": "30d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Frozen",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "index_priority": {
+                            "priority": 2
+                        }
+                    },
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "close": {}
+                    }
+                ],
+                "transitions": [
+                    {
+                        "state_name": "Delete",
+                        "conditions": {
+                            "min_index_age": "90d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Delete",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "snapshot": {
+                            "repository": "Archive",
+                            "snapshot": "archive-snapshot"
+                        }
+                    },
+                    {
+                        "retry": {
+                            "count": 3,
+                            "backoff": "exponential",
+                            "delay": "1m"
+                        },
+                        "delete": {}
+                    }
+                ],
+                "transitions": []
+            }
+        ],
+        "ism_template": [
+            {
+                "index_patterns": [
+                    "wazuh‑alerts-*"
+                ],
+                "priority": 100,
+                "last_updated_time": 1699889226263
+            },
+            {
+                "index_patterns": [
+                    "wazuh‑archives-*"
+                ],
+                "priority": 99,
+                "last_updated_time": 1699890663883
+            }
+        ]
+    }
+}
+
+# Add to wazuh-alerts-* and wazuh-archive-* index
+POST _opendistro/_ism/add/wazuh-alerts-*
+{
+  "policy_id": "Alert-Archive-Lifecycle"
+}
+
+POST _opendistro/_ism/add/wazuh-archives-*
+{
+  "policy_id": "Alert-Archive-Lifecycle"
+}

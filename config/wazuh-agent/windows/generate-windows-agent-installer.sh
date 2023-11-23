@@ -18,41 +18,46 @@ cat > "$SCRIPT_NAME" <<EOF
 Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.6.0-1.msi -OutFile \${env:tmp}\wazuh-agent; msiexec.exe /i \${env:tmp}\wazuh-agent /q WAZUH_MANAGER="\$SERVER" WAZUH_REGISTRATION_SERVER="\$SERVER" WAZUH_MANAGER_PORT="\$WAZUH_AGENT_CONNECTION_PORT" WAZUH_REGISTRATION_PORT="\$WAZUH_AGENT_ENROLLMENT_PORT" WAZUH_AGENT_GROUP="Windows" 
 NET START WazuhSvc
 
-\$sysinternals_repo = 'download.sysinternals.com'
-\$sysinternals_downloadlink = 'https://download.sysinternals.com/files/SysinternalsSuite.zip'
-\$sysinternals_folder = 'C:\Program Files\sysinternals'
-\$sysinternals_zip = 'SysinternalsSuite.zip'
-\$sysmonconfig_downloadlink = '$SYSMON_CONFIG'
-\$sysmonconfig_file = 'sysmonconfig-export.xml'
+\$sysmonZip = "Sysmon.zip"
+\$sysmonUrl = "https://download.sysinternals.com/files/Sysmon.zip"
+\$sysmonExe = "Sysmon.exe"
+\$sysmonConfigUrl = "https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh-agent/windows/sysmonconfig.xml"
+\$sysmonConfig = "sysmonconfig.xml"
 
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-Try
-{
-    write-host ('Downloading and copying Sysinternals Tools to C:\Program Files\sysinternals...')
-    Invoke-WebRequest -Uri \$sysinternals_downloadlink -OutFile \$OutPath\$output
-    Expand-Archive -path \$OutPath\$output -destinationpath \$sysinternals_folder
-    Start-Sleep -s 10
-    Invoke-WebRequest -Uri \$sysmonconfig_downloadlink -OutFile \$OutPath\$sysmonconfig_file
-    \$serviceName = 'Sysmon64'
-    If (Get-Service \$serviceName -ErrorAction SilentlyContinue) {
-        write-host ('Sysmon Is Already Installed')
-    } else {
-        Invoke-Command {reg.exe ADD HKCU\Software\Sysinternals /v EulaAccepted /t REG_DWORD /d 1 /f}
-        Invoke-Command {reg.exe ADD HKU\.DEFAULT\Software\Sysinternals /v EulaAccepted /t REG_DWORD /d 1 /f}
-        Start-Process -FilePath \$sysinternals_folder\Sysmon64.exe -Argumentlist @("-i", "\$OutPath\$sysmonconfig_file")
-    }
+function Download-Sysmon {
+    Write-Host "Downloading Sysmon..."
+    Invoke-WebRequest -Uri \$sysmonUrl -OutFile \$sysmonZip
+    Expand-Archive -Path \$sysmonZip -DestinationPath . -Force
+    Remove-Item \$sysmonZip
 }
-Catch
-{
-    \$ErrorMessage = $_.Exception.Message
-    \$FailedItem = $_.Exception.ItemName
-    Write-Error -Message "\$ErrorMessage \$FailedItem"
+
+function Download-SysmonConfig {
+    Write-Host "Downloading Sysmon configuration..."
+    Invoke-WebRequest -Uri \$sysmonConfigUrl -OutFile \$sysmonConfig
+}
+
+function Install-Sysmon {
+    Write-Host "Installing Sysmon..."
+    Start-Process -FilePath \$sysmonExe -ArgumentList "-accepteula -i \$sysmonConfig" -Wait
+}
+
+if (-not (Test-Path \$sysmonExe)) {
+    Download-Sysmon
+}
+
+Download-SysmonConfig
+
+if (-not (Test-Path \$sysmonConfig)) {
+    Write-Host "Custom sysmonconfig.xml not found!"
     exit 1
 }
-Finally
-{
-    Remove-Item -Path \$OutPath\$output
-}
+
+Install-Sysmon
+
+Write-Host "Sysmon installation completed."
 EOF
+
+chmod +x "$SCRIPT_NAME"
+echo "Generated $SCRIPT_NAME script."
+
 
