@@ -1,16 +1,19 @@
-<!-- Network Connection (Event ID 3) for HTTP (80), HTTPS (443), and DNS (53) -->
-<Sysmon schemaversion="4.0">
-    <EventFiltering>
-        <NetworkConnect onmatch="include">
-            <DestinationPort condition="is">80</DestinationPort>
-            <DestinationPort condition="is">8080</DestinationPort>
-            <DestinationPort condition="is">8000</DestinationPort>
-            <DestinationPort condition="is">5000</DestinationPort>
-            <DestinationPort condition="is">8002</DestinationPort>
-            <DestinationPort condition="is">443</DestinationPort>
-            <DestinationPort condition="is">993</DestinationPort>
-            <DestinationPort condition="is">995</DestinationPort>
-            <DestinationPort condition="is">53</DestinationPort>
-        </NetworkConnect>
-    </EventFiltering>
+<Sysmon schemaversion="4.82">
+  <!-- Capture all hashes -->
+  <HashAlgorithms>*</HashAlgorithms>
+  <EventFiltering>
+    <!-- Log all drivers except if the signature -->
+    <!-- contains Microsoft or Windows -->
+    <DriverLoad onmatch="exclude">
+      <Signature condition="contains">microsoft</Signature>
+      <Signature condition="contains">windows</Signature>
+    </DriverLoad>
+    <!-- Do not log process termination -->
+    <ProcessTerminate onmatch="include" />
+    <NetworkConnect onmatch="include">
+      <DestinationPort>443</DestinationPort>
+      <DestinationPort>80</DestinationPort>
+    </NetworkConnect>
+    <DnsQuery onmatch="exclude" />
+  </EventFiltering>
 </Sysmon>
