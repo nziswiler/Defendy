@@ -27,7 +27,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable wazuh-agent
 sudo systemctl start wazuh-agent
 
-wget ${PACKETBEAT_YAML} -O /etc/packetbeat/packetbeat.yml
+sudo wget ${PACKETBEAT_YAML} -O /etc/packetbeat/packetbeat.yml
 sudo service packetbeat restart
 EOF
 

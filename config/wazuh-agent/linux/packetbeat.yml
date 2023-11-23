@@ -39,14 +39,6 @@ packetbeat.flows:
 # =========================== Transaction protocols ============================
 
 packetbeat.protocols:
-#- type: icmp
-  # Enable ICMPv4 and ICMPv6 monitoring. The default is true.
-#  enabled: true
-
-#- type: dhcpv4
-  # Configure the DHCP for IPv4 ports.
-#  ports: [67, 68]
-
 - type: dns
   # Configure the ports where to listen for DNS traffic. You can disable
   # the DNS protocol by commenting out the list of ports.
@@ -64,18 +56,12 @@ packetbeat.protocols:
     - 443   # HTTPS
     - 993   # IMAPS
     - 995   # POP3S
-    - 5223  # XMPP over SSL
-    - 8443
-    - 8883  # Secure MQTT
-    - 9243  # Elasticsearch
 
 
 # ======================= Elasticsearch template setting =======================
 
 setup.template.settings:
   index.number_of_shards: 1
-  #index.codec: best_compression
-  #_source.enabled: false
 
 # ---------------------------- File Output ---------------------------- 
 output.file:
