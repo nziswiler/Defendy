@@ -4,7 +4,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR" || exit
 
 source ../../../.env
-SCRIPT_NAME="../../../install-linux-agent.sh"
+SCRIPT_NAME="../../../output/install-linux-agent.sh"
 PACKETBEAT_YAML="https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh-agent/linux/packetbeat.yml"
 
 cat > "$SCRIPT_NAME" <<EOF

@@ -1,4 +1,4 @@
-# Generated on Thu Nov 23 17:48:46 UTC 2023
+# Generated on Sun Nov 26 12:30:09 UTC 2023
 # Create grafana role
 PUT _plugins/_security/api/roles/grafana_role
 {
@@ -169,14 +169,14 @@ PUT _plugins/_ism/policies/Statistics-Monitoring-Lifecycle
         "ism_template": [
             {
                 "index_patterns": [
-                    "wazuh‑statistics-*"
+                    "wazuh‑statistics*"
                 ],
                 "priority": 1,
                 "last_updated_time": 1699973048687
             },
             {
                 "index_patterns": [
-                    "wazuh‑monitoring-*"
+                    "wazuh‑monitoring*"
                 ],
                 "priority": 2,
                 "last_updated_time": 1699973048687
@@ -353,14 +353,14 @@ PUT _plugins/_ism/policies/Alert-Archive-Lifecycle
         "ism_template": [
             {
                 "index_patterns": [
-                    "wazuh‑alerts-*"
+                    "wazuh‑alerts*"
                 ],
                 "priority": 100,
                 "last_updated_time": 1699889226263
             },
             {
                 "index_patterns": [
-                    "wazuh‑archives-*"
+                    "wazuh‑archives*"
                 ],
                 "priority": 99,
                 "last_updated_time": 1699890663883

@@ -4,7 +4,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR" || exit
 
 source ../../../.env
-SCRIPT_NAME="../../../install-windows-agent.ps1"
+SCRIPT_NAME="../../../output/install-windows-agent.ps1"
 SYSMON_CONFIG="https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh-agent/windows/sysmonconfig.xml"
 
 # Based on: https://gist.githubusercontent.com/taylorwalton/22b3ef3f624edd494ebf640aba56120c/raw/cee2383e91aea2b850bd87c118f20fc010955cf8/sysmon_install.ps1

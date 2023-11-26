@@ -20,7 +20,7 @@ docker compose up -d
 ./config/create-wazuh-config.sh
 
 # Generate Linux Agent installation script
-./config/wazuh-agent/linux/generate-linux-agent-installer.sh
+./config/wazuh_agent/linux/generate-linux-agent-installer.sh
 
 # Generate Windows Agent installation script
-./config/wazuh-agent/windows/generate-windows-agent-installer.sh
+./config/wazuh_agent/windows/generate-windows-agent-installer.sh

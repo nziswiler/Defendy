@@ -60,14 +60,14 @@ PUT _plugins/_ism/policies/Statistics-Monitoring-Lifecycle
         "ism_template": [
             {
                 "index_patterns": [
-                    "wazuh‑statistics-*"
+                    "wazuh‑statistics*"
                 ],
                 "priority": 1,
                 "last_updated_time": 1699973048687
             },
             {
                 "index_patterns": [
-                    "wazuh‑monitoring-*"
+                    "wazuh‑monitoring*"
                 ],
                 "priority": 2,
                 "last_updated_time": 1699973048687
