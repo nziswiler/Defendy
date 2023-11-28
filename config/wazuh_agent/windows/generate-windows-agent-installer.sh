@@ -5,7 +5,6 @@ cd "$SCRIPT_DIR" || exit
 
 source ../../../.env
 SCRIPT_NAME="../../../output/install-windows-agent.ps1"
-SYSMON_CONFIG="https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh-agent/windows/sysmonconfig.xml"
 
 cat > "$SCRIPT_NAME" <<EOF
 \$SERVER = "$SERVER"
@@ -18,7 +17,7 @@ NET START WazuhSvc
 \$sysmonZip = "Sysmon.zip"
 \$sysmonUrl = "https://download.sysinternals.com/files/Sysmon.zip"
 \$sysmonExe = "Sysmon.exe"
-\$sysmonConfigUrl = "https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh-agent/windows/sysmonconfig.xml"
+\$sysmonConfigUrl = "https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh_agent/windows/sysmonconfig.xml"
 \$sysmonConfig = "sysmonconfig.xml"
 
 function Download-Sysmon {

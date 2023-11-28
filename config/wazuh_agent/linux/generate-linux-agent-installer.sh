@@ -5,7 +5,7 @@ cd "$SCRIPT_DIR" || exit
 
 source ../../../.env
 SCRIPT_NAME="../../../output/install-linux-agent.sh"
-PACKETBEAT_YAML="https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh-agent/linux/packetbeat.yml"
+PACKETBEAT_YAML="https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh_agent/linux/packetbeat.yml"
 
 cat > "$SCRIPT_NAME" <<EOF
 #!/bin/bash

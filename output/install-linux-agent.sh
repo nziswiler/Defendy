@@ -17,5 +17,5 @@ sudo systemctl daemon-reload
 sudo systemctl enable wazuh-agent
 sudo systemctl start wazuh-agent
 
-sudo wget https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh-agent/linux/packetbeat.yml -O /etc/packetbeat/packetbeat.yml
+sudo wget https://raw.githubusercontent.com/nziswiler/Defendy/main/config/wazuh_agent/linux/packetbeat.yml -O /etc/packetbeat/packetbeat.yml
 sudo service packetbeat restart
