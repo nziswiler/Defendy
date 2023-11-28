@@ -1,0 +1,26 @@
+<!-- Based on:  https://github.com/socfortress/Wazuh-Rules/blob/main/Packetbeat/200300-packetbeat_rules.xml -->
+<group name="linux,packetbeat,">
+    <rule id="200300" level="3">
+        <decoded_as>json</decoded_as>
+        <field name="method">QUERY</field>
+        <field name="dns.resolved_ip">\.+</field>
+        <description>Linux: DNS Query to $(dns.question.name)</description>
+        <options>no_full_log</options>
+        <group>dns</group>
+    </rule>
+    <rule id="200301" level="3">
+        <decoded_as>json</decoded_as>
+        <field name="event.dataset">tls</field>
+        <field name="tls.established">true</field>
+        <description>Linux: HTTPS connection established to $(tls.client.server_name)</description>
+        <options>no_full_log</options>
+        <group>tls</group>
+    </rule>
+    <rule id="200302" level="3">
+        <decoded_as>json</decoded_as>
+        <field name="type">http</field>
+        <description>Linux: HTTP connection established to $(destination.ip)</description>
+        <options>no_full_log</options>
+        <group>http</group>
+    </rule>
+</group>

@@ -1,6 +1,6 @@
 <agent_config>
 	<localfile>
 		<log_format>json</log_format>
-		<location>/tmp/packetbeat/packetbeat</location>
+		<location>/tmp/packetbeat/*.ndjson</location>
 	</localfile>
 </agent_config>
