@@ -24,8 +24,6 @@ plugins.security.check_snapshot_restore_write_privileges: true
 plugins.security.enable_snapshot_restore_privilege: true
 plugins.security.nodes_dn:
 - "CN=wazuh1.indexer,OU=Wazuh,O=Wazuh,L=California,C=US"
-- "CN=wazuh2.indexer,OU=Wazuh,O=Wazuh,L=California,C=US"
-- "CN=wazuh3.indexer,OU=Wazuh,O=Wazuh,L=California,C=US"
 - "CN=filebeat,OU=Wazuh,O=Wazuh,L=California,C=US"
 plugins.security.restapi.roles_enabled:
 - "all_access"
