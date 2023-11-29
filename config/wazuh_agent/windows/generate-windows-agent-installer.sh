@@ -7,11 +7,7 @@ source ../../../.env
 SCRIPT_NAME="../../../output/install-windows-agent.ps1"
 
 cat > "$SCRIPT_NAME" <<EOF
-\$SERVER = "$SERVER"
-\$WAZUH_AGENT_CONNECTION_PORT = "$WAZUH_AGENT_CONNECTION_PORT"
-\$WAZUH_AGENT_ENROLLMENT_PORT = "$WAZUH_AGENT_ENROLLMENT_PORT"
-
-Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.6.0-1.msi -OutFile \${env:tmp}\wazuh-agent; msiexec.exe /i \${env:tmp}\wazuh-agent /q WAZUH_MANAGER="\$SERVER" WAZUH_REGISTRATION_SERVER="\$SERVER" WAZUH_MANAGER_PORT="\$WAZUH_AGENT_CONNECTION_PORT" WAZUH_REGISTRATION_PORT="\$WAZUH_AGENT_ENROLLMENT_PORT" WAZUH_AGENT_GROUP="Windows" 
+Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.6.0-1.msi -OutFile \${env:tmp}\wazuh-agent; msiexec.exe /i \${env:tmp}\wazuh-agent /q WAZUH_MANAGER="$SERVER" WAZUH_REGISTRATION_SERVER="$SERVER" WAZUH_MANAGER_PORT="$WAZUH_AGENT_CONNECTION_PORT" WAZUH_REGISTRATION_PORT="$WAZUH_AGENT_ENROLLMENT_PORT" WAZUH_AGENT_GROUP="Windows" 
 NET START WazuhSvc
 
 \$sysmonZip = "Sysmon.zip"
