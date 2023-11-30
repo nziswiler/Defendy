@@ -1,3 +1,3 @@
-# Defendy
+# Diplomarbeit Defendy - "Cyber Security as a Service"
 
-Based on Wazuh: https://github.com/wazuh/wazuh-docker/
+Als basis für dieses Repository diente https://github.com/wazuh/wazuh-docker/
